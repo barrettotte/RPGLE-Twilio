@@ -1,0 +1,4 @@
+# Ignore some file extensions that aren't in GitHub Linguist
+*.clle  linguist-detectable=false
+*.cmd   linguist-detectable=false
+*.clp   linguist-detectable=false
