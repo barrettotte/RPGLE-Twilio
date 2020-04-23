@@ -1,1 +1,6 @@
 logs
+
+## Separate files containing secrets
+test/http/private.http
+test/sql/private.sql
+
