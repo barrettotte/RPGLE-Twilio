@@ -1,8 +1,3 @@
-/*
-Purpose: Hit Twilio SMS API
-Usage: call TWILIOSMS/send_sms('{{to}}','{{from}}','Hello World','{{account}}','{{auth}}');
-*/
-
 create or replace procedure TWILIO/send_sms ( 
     phone_to   varchar(16),
     phone_from varchar(16),
@@ -24,13 +19,13 @@ begin
       SysTools.HttpPostClob(
         'https://api.twilio.com/2010-04-01/Accounts/' || trim(account) || '/Messages.json',
         cast((
-          '<httpHeader>
-            <header name="Authorization" value="Basic ' || trim(SysTools.Base64Encode(
+          '<httpHeader>' ||
+            '<header name="Authorization" value="Basic ' || trim(SysTools.Base64Encode(
               cast((trim(account) || ':' || trim(auth)) as varchar(256) ccsid 1208))) ||
-            '"/>
-            <header name="Accept" value="application/json"/>
-            <header name="Content-Type" value="application/x-www-form-urlencoded"/>
-          </httpHeader>'
+            '"/>' ||
+            '<header name="Accept" value="application/json"/>' ||
+            '<header name="Content-Type" value="application/x-www-form-urlencoded"/>' ||
+          '</httpHeader>'
         ) as clob),
         cast((
           'To='    || SysTools.UrlEncode(trim(phone_to), 'UTF-8') ||

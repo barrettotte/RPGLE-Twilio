@@ -109,12 +109,13 @@ build_lf(){
   exec_qsh "CRTLF FILE($BIN_LIB/$1) SRCFILE($BIN_LIB/QDDSSRC)" -log "$1.lf"
 }
 
+# build_sql 'MBR' 'TEXT'C
 build_sql(){
   exec_qsh "CHGATR OBJ('$IFS_SQL/$1.sql') ATR(*CCSID) VALUE(1252)"
   exec_qsh "CRTSRCPF FILE($BIN_LIB/QSQLSRC) RCDLEN(132) CCSID($CCSID)"
   exec_qsh "CPYFRMSTMF FROMSTMF('$IFS_SQL/$1.sql') TOMBR('/QSYS.lib/$BIN_LIB.lib/QSQLSRC.file/$1.mbr') MBROPT(*REPLACE)"
   exec_qsh "CHGPFM FILE($BIN_LIB/QSQLSRC) MBR($1) SRCTYPE(SQL) TEXT('$2')"
-  exec_qsh "RUNSQLSTM SRCFILE($BIN_LIB/QSQLSRC) SRCMBR($1) COMMIT(*NONE) ERRLVL(30)" -log "$1.sql"
+  exec_qsh "RUNSQLSTM SRCFILE($BIN_LIB/QSQLSRC) SRCMBR($1) COMMIT(*NONE) ERRLVL(30) MARGINS(160)" -log "$1.sql"
 }
 
 build_bnd(){
@@ -161,8 +162,8 @@ build(){
   echo -e '\nBuilding...'
   
   build_obj 'sms_log.sql' 'Log Twilio SMS Requests'
-  build_obj 'sms_log_v.sql' 'Simple view over SMS Log'
-  #build_obj 'send_sms.sql' 'Hit Twilio SMS API'
+  build_obj 'sms_log_v.sql' 'Simplified SMS Log View'
+  build_obj 'send_sms.sql' 'Hit Twilio SMS API'
 
   # Build SRVPGM
   #exec_qsh "CRTRPGMOD MODULE($BIN_LIB/SMS) SRCSTMF($IFS_SRC/sms.sqlrpgle) TEXT('Twilio SMS Module')"
