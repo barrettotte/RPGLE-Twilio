@@ -1,7 +1,8 @@
 **free
 
+/if not defined (SMS)
+/define SMS
 
-// data structures 
 dcl-ds smsResponse qualified template;
   sid           varchar(64);
   date_created  varchar(64);
@@ -22,11 +23,27 @@ dcl-ds smsResponse qualified template;
   error_code    varchar(8);
   error_message varchar(512);
   uri           varchar(256);
-  media         varchar(256);
 end-ds;
 
 
-// prototypes
+dcl-ds smsRequest qualified template;
+  phone_to   varchar(16);
+  phone_from varchar(16);
+  msg        varchar(1600);
+  account    varchar(64);
+  auth       varchar(64);
+end-ds;
+
+
+// Send request DS to Twilio API, log and return entire response as DS
+dcl-pr sendSmsVerbose likeds(smsResponse);
+  req likeds(smsRequest);
+end-pr;
+
+
+// Send request to Twilio API, log and only return error code
+// For simple requests where we don't care about the details immediately.
+// We just care whether it successfully sent the request
 dcl-pr sendSms varchar(8);
   phone_to     varchar(16);
   phone_from   varchar(16);
@@ -36,7 +53,4 @@ dcl-pr sendSms varchar(8);
 end-pr;
 
 
-//TODO: Pass smsRequest DS, return smsResponse DS
-//dcl-pr sendSmsVerbose;
-//  
-//end-pr;
+/endif

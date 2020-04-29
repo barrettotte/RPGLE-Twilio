@@ -8,13 +8,32 @@ create or replace procedure TWILIO/send_sms (
   LANGUAGE SQL
   SPECIFIC TWILIO/SENDSMS
   DYNAMIC RESULT SETS 1
-  SET OPTION DBGVIEW = *SOURCE,
-             CLOSQLCSR = *ENDACTGRP
+  SET OPTION DBGVIEW = *SOURCE
 
-  
 begin
+
   declare sms_csr cursor with return for
-    select *
+    -- this is incredibly ugly, but if it means not dealing with NULLs...I'll take it
+    select
+      coalesce(sid, ''),
+      coalesce(date_created, ''),
+      coalesce(date_updated, ''),
+      coalesce(date_sent, ''),
+      coalesce(account_sid, ''),
+      coalesce(phone_to, ''),
+      coalesce(phone_from, ''),
+      coalesce(msg_srv_sid, ''),
+      coalesce(body, ''),
+      coalesce(status, ''),
+      coalesce(num_segments, ''),
+      coalesce(num_media, ''),
+      coalesce(direction, ''),
+      coalesce(api_version, ''),
+      coalesce(price, ''),
+      coalesce(price_unit, ''),
+      coalesce(error_code, ''),
+      coalesce(error_message, ''),
+      coalesce(uri, '')
     from json_table(
       SysTools.HttpPostClob(
         'https://api.twilio.com/2010-04-01/Accounts/' || trim(account) || '/Messages.json',
@@ -55,6 +74,7 @@ begin
         uri           varchar(256)  path 'lax $.uri'
       )
     );
+
   open sms_csr;
   
 end;

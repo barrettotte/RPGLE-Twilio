@@ -8,10 +8,12 @@
 # Example project structure:
 #   cmd/ - .cmd
 #   dds/ - .pf .lf
-#   inc/ - .rpgle (headers) .bnd (binder language)
 #   sql/ - .sql
 #   src/ - .rpgle .sqlrpgle .clle .dspf .bnd
-
+#
+# Truthfully I don't like this build script or the generic makefile I've used
+#   in other projects. One day I want to make a build system/script that
+#   "just works" and makes sense with little specific coding...
 
 # +-----------------------------------------------------------------------------+
 # |                          Project Configuration                              |
@@ -20,7 +22,6 @@
 BIN_LIB='TWILIO'
 
 IFS_BASE=$(pwd)
-IFS_INC="$IFS_BASE/inc"
 IFS_SRC="$IFS_BASE/src"
 IFC_CMD="$IFS_BASE/cmd"
 IFS_DDS="$IFS_BASE/dds"
@@ -43,34 +44,42 @@ exec_qsh(){
 }
 
 clear_lib(){
+  echo ' '
   exec_qsh "CLRLIB $1"
 }
 
 build_lib(){
+  echo ' '
   exec_qsh "CRTLIB LIB($1) TYPE($2) TEXT('$3')"
 }
 
 delete_obj(){
+  echo ' '
   exec_qsh "DLTOBJ OBJ($1) OBJTYPE($2)"
 }
 
 build_rpgle(){
+  echo ' '
   exec_qsh "CHGATR OBJ('$IFS_SRC/$1.rpgle') ATR(*CCSID) VALUE(1252)"
   exec_qsh "CRTSRCPF FILE($BIN_LIB/QRPGLESRC) RCDLEN(112) CCSID($CCSID)"
   exec_qsh "CPYFRMSTMF FROMSTMF('$IFS_SRC/$1.rpgle') TOMBR('/QSYS.lib/$BIN_LIB.lib/QRPGLESRC.file/$1.mbr') MBROPT(*REPLACE)"
   exec_qsh "CHGPFM FILE($BIN_LIB/QRPGLESRC) MBR($1) SRCTYPE(RPGLE) TEXT('$2')"
-  exec_qsh "CRTBNDRPG PGM($BIN_LIB/$1) SRCSTMF('$IFS_SRC/$1.rpgle') OPTION(*NOUNREF) DBGVIEW(*LIST) INCDIR('$IFS_INC')" -log "$1.rpgle"
+  exec_qsh "CRTBNDRPG PGM($BIN_LIB/$1) SRCSTMF('$IFS_SRC/$1.rpgle') OPTION(*NOUNREF) DBGVIEW(*LIST) INCDIR('$IFS_SRC')" -log "$1.rpgle"
 }
 
+# build_sqlrpgle 'MBR' 'TEXT' 'OBJTYPE'
 build_sqlrpgle(){
+  echo ' '
   exec_qsh "CHGATR OBJ('$IFS_SRC/$1.sqlrpgle') ATR(*CCSID) VALUE(1252)"
   exec_qsh "CRTSRCPF FILE($BIN_LIB/QRPGLESRC) RCDLEN(112) CCSID($CCSID)"
   exec_qsh "CPYFRMSTMF FROMSTMF('$IFS_SRC/$1.sqlrpgle') TOMBR('/QSYS.lib/$BIN_LIB.lib/QRPGLESRC.file/$1.mbr') MBROPT(*REPLACE)"
   exec_qsh "CHGPFM FILE($BIN_LIB/QRPGLESRC) MBR($1) SRCTYPE(SQLRPGLE) TEXT('$2')"
-  exec_qsh "CRTSQLRPGI OBJ($BIN_LIB/$1) SRCSTMF('$IFS_SRC/$1.sqlrpgle') RPGPPOPT(*LVL2) COMPILEOPT('OPTION(*NOUNREF) DBGVIEW(*SOURCE) INCDIR(''$IFS_INC'')') DBGVIEW(*NONE) COMMIT(*NONE)" -log "$1.sqlrpgle"
+  objtype=${3:-'*PGM'}
+  exec_qsh "CRTSQLRPGI OBJ($BIN_LIB/$1) SRCSTMF('$IFS_SRC/$1.sqlrpgle') RPGPPOPT(*LVL2) COMPILEOPT('OPTION(*NOUNREF) DBGVIEW(*SOURCE) INCDIR(''$IFS_SRC'')') DBGVIEW(*NONE) COMMIT(*NONE) OBJTYPE($objtype)" -log "$1.sqlrpgle"
 }
 
 build_cmd(){
+  echo ' '
   exec_qsh "CHGATR OBJ('$IFS_CMD/$1.cmd') ATR(*CCSID) VALUE(1252)"
   exec_qsh "CRTSRCPF FILE($BIN_LIB/QCMDSRC) RCDLEN(132) CCSID($CCSID)"
   exec_qsh "CPYFRMSTMF FROMSTMF('$IFS_CMD/$1.cmd') TOMBR('/QSYS.lib/$BIN_LIB.lib/QCMDSRC.file/$1.mbr') MBROPT(*REPLACE)"
@@ -79,6 +88,7 @@ build_cmd(){
 }
 
 build_clle(){
+  echo ' '
   exec_qsh "CRTSRCPF FILE($BIN_LIB/QCLLESRC) RCDLEN(112) CCSID($CCSID)"
   exec_qsh "CPYFRMSTMF FROMSTMF('$IFS_SRC/$1.clle') TOMBR('/QSYS.lib/$BIN_LIB.lib/QCLLESRC.file/$1.mbr') MBROPT(*REPLACE)"
   exec_qsh "CHGPFM FILE($BIN_LIB/QCLLESRC) MBR($1) SRCTYPE(CLLE) TEXT('$2')"
@@ -86,6 +96,7 @@ build_clle(){
 }
 
 build_dspf(){
+  echo ' '
   exec_qsh "CHGATR OBJ('$IFS_SRC/$1.dspf') ATR(*CCSID) VALUE(1252)"
   exec_qsh "CRTSRCPF FILE($BIN_LIB/QDDSSRC) RCDLEN(132) CCSID($CCSID)"
   exec_qsh "CPYFRMSTMF FROMSTMF('$IFS_SRC/$1.dspf') TOMBR('/QSYS.lib/$BIN_LIB.lib/QDDSSRC.file/$1.mbr') MBROPT(*REPLACE)"
@@ -94,6 +105,7 @@ build_dspf(){
 }
 
 build_pf(){
+  echo ' '
   exec_qsh "CHGATR OBJ('$IFS_DDS/$1.pf') ATR(*CCSID) VALUE(1252)"
   exec_qsh "CRTSRCPF FILE($BIN_LIB/QDDSSRC) RCDLEN(132) CCSID($CCSID)"
   exec_qsh "CPYFRMSTMF FROMSTMF('$IFS_DDS/$1.pf') TOMBR('/QSYS.lib/$BIN_LIB.lib/QDDSSRC.file/$1.mbr') MBROPT(*REPLACE)"
@@ -102,6 +114,7 @@ build_pf(){
 }
 
 build_lf(){
+  echo ' '
   exec_qsh "CHGATR OBJ('$IFS_DDS/$1.lf') ATR(*CCSID) VALUE(1252)"
   exec_qsh "CRTSRCPF FILE($BIN_LIB/QDDSSRC) RCDLEN(132) CCSID($CCSID)"
   exec_qsh "CPYFRMSTMF FROMSTMF('$IFS_DDS/$1.lf') TOMBR('/QSYS.lib/$BIN_LIB.lib/QDDSSRC.file/$1.mbr') MBROPT(*REPLACE)"
@@ -109,25 +122,25 @@ build_lf(){
   exec_qsh "CRTLF FILE($BIN_LIB/$1) SRCFILE($BIN_LIB/QDDSSRC)" -log "$1.lf"
 }
 
-# build_sql 'MBR' 'TEXT'C
 build_sql(){
+  echo ' '
   exec_qsh "CHGATR OBJ('$IFS_SQL/$1.sql') ATR(*CCSID) VALUE(1252)"
   exec_qsh "CRTSRCPF FILE($BIN_LIB/QSQLSRC) RCDLEN(132) CCSID($CCSID)"
   exec_qsh "CPYFRMSTMF FROMSTMF('$IFS_SQL/$1.sql') TOMBR('/QSYS.lib/$BIN_LIB.lib/QSQLSRC.file/$1.mbr') MBROPT(*REPLACE)"
   exec_qsh "CHGPFM FILE($BIN_LIB/QSQLSRC) MBR($1) SRCTYPE(SQL) TEXT('$2')"
-  exec_qsh "RUNSQLSTM SRCFILE($BIN_LIB/QSQLSRC) SRCMBR($1) COMMIT(*NONE) ERRLVL(30) MARGINS(160)" -log "$1.sql"
+  exec_qsh "RUNSQLSTM SRCSTMF('$IFS_SQL/$1.sql') COMMIT(*NONE) ERRLVL(30)" -log "$1.sql"
 }
 
 build_bnd(){
-  exec_qsh "CHGATR OBJ('$IFS_INC/$1.bnd' ATR(*CCSID) VALUE(1252)"
+  echo ' '
+  exec_qsh "CHGATR OBJ('$IFS_SRC/$1.bnd') ATR(*CCSID) VALUE(1252)"
   exec_qsh "CRTSRCPF FILE($BIN_LIB/QSRVSRC) RCDLEN(112) CCSID($CCSID)"
-  exec_qsh "CPYFRMSTMF FROMSTMF('$IFS_INC/$1.bnd') TOMBR('/QSYS.lib/$BIN_LIB.lib/QSRVSRC.file/$1.mbr') MBROPT(*REPLACE)"
+  exec_qsh "CPYFRMSTMF FROMSTMF('$IFS_SRC/$1.bnd') TOMBR('/QSYS.lib/$BIN_LIB.lib/QSRVSRC.file/$1.mbr') MBROPT(*REPLACE)"
   exec_qsh "CHGPFM FILE($BIN_LIB/QSRVSRC) MBR($1) SRCTYPE(BND) TEXT('$2')"
 }
 
 # Generically build object based on file extension  ->  build_obj 'MBR.ext' 'TEXT'
 build_obj(){
-  echo ' '
   IFS='.' read -ra mbr <<< "$1"
   if   [ "${mbr[1]}" == 'sqlrpgle' ]; then build_sqlrpgle "${mbr[0]}" "$2"
   elif [ "${mbr[1]}" == 'rpgle' ];    then build_rpgle "${mbr[0]}" "$2"
@@ -139,6 +152,7 @@ build_obj(){
   elif [ "${mbr[1]}" == 'sql' ];      then build_sql "${mbr[0]}" "$2"
   elif [ "${mbr[1]}" == 'pf' ];       then build_pf "${mbr[0]}" "$2"
   elif [ "${mbr[1]}" == 'lf' ];       then build_lf "${mbr[0]}" "$2"
+  elif [ "${mbr[1]}" == 'bnd' ];      then build_bnd "${mbr[0]}" "$2"
   else echo "Unsupported file type '${mbr[0]}.${mbr[1]}'"
   fi
 }
@@ -161,12 +175,15 @@ pre_build(){
 build(){
   echo -e '\nBuilding...'
   
-  build_obj 'sms_log.sql' 'Log Twilio SMS Requests'
-  build_obj 'sms_log_v.sql' 'Simplified SMS Log View'
-  build_obj 'send_sms.sql' 'Hit Twilio SMS API'
+  #build_obj 'sms_log.sql' 'Log Twilio SMS Requests'
+  #build_obj 'sms_log_v.sql' 'Simplified SMS Log View'
+  #build_obj 'send_sms.sql' 'Hit Twilio SMS API'
 
-  # Build SRVPGM
-  #exec_qsh "CRTRPGMOD MODULE($BIN_LIB/SMS) SRCSTMF($IFS_SRC/sms.sqlrpgle) TEXT('Twilio SMS Module')"
+  exec_qsh "CRTBNDDIR BNDDIR($BIN_LIB/TWILIO) TEXT('Twilio Binding Directory')"
+  build_sqlrpgle 'sms' 'Twilio SMS module' '*MODULE'
+  build_obj 'twiliosms.bnd' 'Twilio SMS Service Binding'
+  exec_qsh "CRTSRVPGM SRVPGM($BIN_LIB/TWILIOSMS) MODULE($BIN_LIB/SMS) EXPORT(*SRCFILE) SRCSTMF('$IFS_SRC/twiliosms.bnd') TEXT('Twilio SMS Service') BNDDIR($BIN_LIB/TWILIO)"
+
 
   # CRTRPGMOD
   # CRTSRVPGM
@@ -174,7 +191,7 @@ build(){
   # CRTBNDDIR
   # ADDBNDDIRE
 
-  build_obj 'private.sqlrpgle' 'Test Twilio SMS API'
+  # build_obj 'private.sqlrpgle' 'Test Twilio SMS API'
 
 }
 
