@@ -2,9 +2,12 @@
 An example RPGLE service program for the Twilio SMS API
 
 
+
+
 ## Commands
-* connect via SSH - ```ssh user@PUB400.COM -p 2222```
+* give permissions to build script and build project - ```chmod u+x build.sh & ./build.sh```
 * git push - ```git -c http.sslVerify=false push origin master```
+
 
 
 ## References
