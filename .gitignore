@@ -4,3 +4,4 @@ logs
 test/http/private.http
 test/sql/private.sql
 private.sqlrpgle
+config.json

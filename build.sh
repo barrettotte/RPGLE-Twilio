@@ -55,7 +55,7 @@ build_lib(){
 
 delete_obj(){
   echo ' '
-  exec_qsh "DLTOBJ OBJ($1) OBJTYPE($2)"
+  exec_qsh "DLTOBJ OBJ($BIN_LIB/$1) OBJTYPE($2)"
 }
 
 build_rpgle(){
@@ -169,29 +169,27 @@ pre_build(){
   echo '========================================================================'
   echo -e '\nRunning pre-build...'
   rm $LOG_DIR/*.log
+  clear_lib "$BIN_LIB"
   build_lib "$BIN_LIB" '*TEST' 'Twilio'
 }
 
 build(){
   echo -e '\nBuilding...'
   
-  #build_obj 'sms_log.sql' 'Log Twilio SMS Requests'
-  #build_obj 'sms_log_v.sql' 'Simplified SMS Log View'
-  #build_obj 'send_sms.sql' 'Hit Twilio SMS API'
+  build_obj 'sms_log.sql' 'Log Twilio SMS Requests'
+  build_obj 'sms_log_v.sql' 'Simplified SMS Log View'
+  build_obj 'send_sms.sql' 'Hit Twilio SMS API'
 
-  exec_qsh "CRTBNDDIR BNDDIR($BIN_LIB/TWILIO) TEXT('Twilio Binding Directory')"
   build_sqlrpgle 'sms' 'Twilio SMS module' '*MODULE'
   build_obj 'twiliosms.bnd' 'Twilio SMS Service Binding'
-  exec_qsh "CRTSRVPGM SRVPGM($BIN_LIB/TWILIOSMS) MODULE($BIN_LIB/SMS) EXPORT(*SRCFILE) SRCSTMF('$IFS_SRC/twiliosms.bnd') TEXT('Twilio SMS Service') BNDDIR($BIN_LIB/TWILIO)"
+  echo ' '
+  exec_qsh "CRTSRVPGM SRVPGM($BIN_LIB/TWILIOSMS) MODULE($BIN_LIB/*ALL) EXPORT(*SRCFILE) SRCSTMF('$IFS_SRC/twiliosms.bnd') TEXT('Twilio SMS Service') REPLACE(*YES) ACTGRP(TWILIO)"
+  echo ' '
+  exec_qsh "CRTBNDDIR BNDDIR($BIN_LIB/TWILIO) TEXT('Twilio Binding Directory')"
+  exec_qsh "ADDBNDDIRE BNDDIR($BIN_LIB/TWILIO) OBJ(($BIN_LIB/TWILIOSMS *SRVPGM))"
 
-
-  # CRTRPGMOD
-  # CRTSRVPGM
-  # DLTOBJ *MODULE
-  # CRTBNDDIR
-  # ADDBNDDIRE
-
-  # build_obj 'private.sqlrpgle' 'Test Twilio SMS API'
+  # tests
+  build_obj 'private.sqlrpgle' 'Test Twilio SMS API'
 
 }
 
