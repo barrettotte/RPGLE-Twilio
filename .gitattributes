@@ -4,4 +4,4 @@
 *.clp   linguist-detectable=false
 
 # Ignore build scripts
-*/build.sh linguist-detectable=false
+*/*build.sh linguist-vendored
