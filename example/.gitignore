@@ -1,0 +1,5 @@
+logs
+
+# Ignore duplicate files found in main directory
+build.sh
+sms_h.rpgle
