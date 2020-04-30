@@ -188,9 +188,6 @@ build(){
   exec_qsh "CRTBNDDIR BNDDIR($BIN_LIB/TWILIO) TEXT('Twilio Binding Directory')"
   exec_qsh "ADDBNDDIRE BNDDIR($BIN_LIB/TWILIO) OBJ(($BIN_LIB/TWILIOSMS *SRVPGM))"
 
-  # tests
-  build_obj 'private.sqlrpgle' 'Test Twilio SMS API'
-
 }
 
 post_build(){
