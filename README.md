@@ -19,7 +19,7 @@ The service program is really only a wrapper over top of a stored procedure I wr
 * Setup Twilio account and a Twilio phone number - https://www.twilio.com/
 * Connect to IBMi via SSH - ```ssh USER@YOUR400```
 * Clone project - ```git clone https://github.com/barrettotte/RPGLE-Twilio.git```
-* Navigate to project - ```cd RPLGE-Twilio```
+* Navigate to project - ```cd RPGLE-Twilio```
 * Give permissions to build script - ```chmod u+x build.sh```
 * Run build script - ```./build.sh```
 * The build script will create the following
@@ -27,7 +27,7 @@ The service program is really only a wrapper over top of a stored procedure I wr
   * A Log table for logging SMS requests - **sms_log**
   * A simplified view over the log table -> **sms_log_v**
   * A stored procedure to call Twilio SMS API -> **send_sms**
-  * An RPGLE service program to call Twilio SMS API 
+  * An RPGLE service program to call Twilio SMS API -> ```ctl-opt bnddir('TWILIO/TWILIO') actgrp(*new);```
 * Example call in [example/src/testtwilio.sqlrpgle](example/src/testtwilio.sqlrpgle)
 
 
