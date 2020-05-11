@@ -27,7 +27,8 @@ The service program is really only a wrapper over top of a stored procedure I wr
   * A Log table for logging SMS requests - **sms_log**
   * A simplified view over the log table -> **sms_log_v**
   * A stored procedure to call Twilio SMS API -> **send_sms**
-  * An RPGLE service program to call Twilio SMS API -> Example in [example/src/testtwilio.sqlrpgle](example/src/testtwilio.sqlrpgle)
+  * An RPGLE service program to call Twilio SMS API 
+* Example call in [example/src/testtwilio.sqlrpgle](example/src/testtwilio.sqlrpgle)
 
 
 ## Commands
