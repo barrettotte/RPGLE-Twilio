@@ -15,6 +15,21 @@ Additionally, each procedure logs the Twilio request/response to [sql/sms_log.sq
 The service program is really only a wrapper over top of a stored procedure I wrote, [sql/send_sms.sql](sql/send_sms.sql).
 
 
+## Setup
+* Setup Twilio account and a Twilio phone number - https://www.twilio.com/
+* Connect to IBMi via SSH - ```ssh USER@YOUR400```
+* Clone project - ```git clone https://github.com/barrettotte/RPGLE-Twilio.git```
+* Navigate to project - ```cd RPLGE-Twilio```
+* Give permissions to build script - ```chmod u+x build.sh```
+* Run build script - ```./build.sh```
+* The build script will create the following
+  * A Library named **TWILIO** to hold all of the Twilio objects
+  * A Log table for logging SMS requests - **sms_log**
+  * A simplified view over the log table -> **sms_log_v**
+  * A stored procedure to call Twilio SMS API -> **send_sms**
+  * An RPGLE service program to call Twilio SMS API -> Example in [example/src/testtwilio.sqlrpgle](example/src/testtwilio.sqlrpgle)
+
+
 ## Commands
 * give permissions to build script and build project - ```chmod u+x build.sh & ./build.sh```
 * git push - ```git -c http.sslVerify=false push origin master```
