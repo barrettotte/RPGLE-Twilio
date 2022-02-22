@@ -1,5 +1,5 @@
 # RPGLE-Twilio-SMS
-A really basic RPGLE service program to send a text with the Twilio SMS API.
+A really basic RPGLE service program to send a text with the Twilio SMS API. 
 
 This is my introduction to making service programs, so its probably not great.
 Originally I was going to submit this to the [Twilio Hackathon at DEV](https://dev.to/t/twiliohackathon),
